@@ -1,4 +1,4 @@
-![last commit](https://img.shields.io/github/last-commit/<Cooltrizzle>/<PokemonVGC>.svg)
+![last commit](https://img.shields.io/github/last-update/<Cooltrizzle>/<PokemonVGC>.svg)
 
 theme: jekyll-theme-minimal
 
