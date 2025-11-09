@@ -1,0 +1,38 @@
+name: Update README last updated
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set timestamp
+        run: echo "TIMESTAMP=$(date -u +'%Y-%m-%d %H:%M UTC')" >> $GITHUB_ENV
+
+      - name: Replace placeholder in README
+        run: |
+          FILE=README.md
+          START='<!-- LAST_UPDATED:START -->'
+          END='<!-- LAST_UPDATED:END -->'
+          NEWLINE="Last updated: $TIMESTAMP"
+          awk -v s="$START" -v e="$END" -v n="$NEWLINE" '
+            BEGIN {in=0}
+            { if ($0 ~ s) { print; print n; in=1; next }
+              if ($0 ~ e) { print; in=0; next }
+              if (!in) print
+            }' "$FILE" > "$FILE.tmp"
+          mv "$FILE.tmp" "$FILE"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$FILE"
+          git commit -m "chore(readme): update last updated timestamp" || echo "No changes to commit"
+          git push origin HEAD:main
