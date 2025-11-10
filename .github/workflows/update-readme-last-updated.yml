@@ -20,14 +20,15 @@ jobs:
           persist-credentials: true
 
       - name: Set timestamp (UTC)
-        run: echo "TIMESTAMP=$(date -u +'%Y-%m-%d %H:%M UTC')" >> $GITHUB_ENV
+        run: |
+          echo "TIMESTAMP=$(date -u +'%Y-%m-%d %H:%M UTC')" >> $GITHUB_ENV
 
       - name: Replace placeholder in README (robust)
         run: |
           set -eo pipefail
-          FILE=README.md
-          START='<!-- LAST_UPDATED:START -->'
-          END='<!-- LAST_UPDATED:END -->'
+          FILE="README.md"
+          START="<!-- LAST_UPDATED:START -->"
+          END="<!-- LAST_UPDATED:END -->"
           NEWLINE="Last updated: $TIMESTAMP"
 
           if [ ! -f "$FILE" ]; then
@@ -43,12 +44,12 @@ EOF
           echo "Before replacement (first 20 lines):"
           head -n 20 "$FILE" || true
 
-          # Use perl to replace everything between markers (handles CRLFs safely)
+          # Use perl in slurp mode to safely replace block between markers
           perl -0777 -pe '
-            use File::Slurp;
-            my $s = quotemeta("'"$START"'");
-            my $e = quotemeta("'"$END"'");
-            s/($s).*?($e)/$1\n'"$NEWLINE"'\n$2/sg;
+            my $s = quotemeta($ENV{"START"});
+            my $e = quotemeta($ENV{"END"});
+            my $n = $ENV{"NEWLINE"};
+            s/($s).*?($e)/$1\n$n\n$2/sg;
           ' -- "$FILE" > "$FILE.tmp"
           mv "$FILE.tmp" "$FILE"
 
