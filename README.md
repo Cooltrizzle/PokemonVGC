@@ -1,6 +1,3 @@
-!-- LAST_UPDATED:START --
-!-- LAST_UPDATED:END --
-
 theme: jekyll-theme-minimal
 
 title: Octocat's homepage
