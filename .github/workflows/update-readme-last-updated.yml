@@ -7,6 +7,9 @@ on:
   schedule:
     - cron: '0 0 * * *'
 
+permissions:
+  contents: write
+
 jobs:
   update-readme:
     runs-on: ubuntu-latest
@@ -16,40 +19,48 @@ jobs:
         with:
           persist-credentials: true
 
-      - name: Set timestamp
-        id: ts
-        run: |
-          # ISO date + time (UTC)
-          echo "TIMESTAMP=$(date -u +'%Y-%m-%d %H:%M UTC')" >> $GITHUB_ENV
+      - name: Set timestamp (UTC)
+        run: echo "TIMESTAMP=$(date -u +'%Y-%m-%d %H:%M UTC')" >> $GITHUB_ENV
 
-      - name: Debug README and environment
+      - name: Replace placeholder in README (robust)
         run: |
-          echo "Runner shell: $SHELL"
-          echo "awk version:"
-          awk --version || awk -W version || true
-          echo "--- head (show ^M if present) ---"
-          sed -n '1,40p' README.md | sed -n '1,40p' | nl -ba
-          echo "--- show bytes of first 3 lines ---"
-          head -n 3 README.md | od -c
-
-      - name: Replace placeholder in README
-        run: |
+          set -eo pipefail
           FILE=README.md
           START='<!-- LAST_UPDATED:START -->'
           END='<!-- LAST_UPDATED:END -->'
           NEWLINE="Last updated: $TIMESTAMP"
-          if [ ! -f "$FILE" ]; then echo "$FILE not found"; exit 1; fi
 
-          awk -v s="$START" -v e="$END" -v n="$NEWLINE" '
-            BEGIN {in=0}
-            { if ($0 ~ s) { print; print n; in=1; next }
-              if ($0 ~ e) { print; in=0; next }
-              if (!in) print
-            }' "$FILE" > "$FILE.tmp"
+          if [ ! -f "$FILE" ]; then
+            echo "$FILE not found, creating minimal README with markers"
+            cat > "$FILE" <<EOF
+# Project Title
+
+$START
+$END
+EOF
+          fi
+
+          echo "Before replacement (first 20 lines):"
+          head -n 20 "$FILE" || true
+
+          # Use perl to replace everything between markers (handles CRLFs safely)
+          perl -0777 -pe '
+            use File::Slurp;
+            my $s = quotemeta("'"$START"'");
+            my $e = quotemeta("'"$END"'");
+            s/($s).*?($e)/$1\n'"$NEWLINE"'\n$2/sg;
+          ' -- "$FILE" > "$FILE.tmp"
           mv "$FILE.tmp" "$FILE"
+
+          echo "After replacement (first 20 lines):"
+          head -n 20 "$FILE" || true
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add "$FILE"
-          git commit -m "chore(readme): update last updated timestamp" || echo "No changes to commit"
-          git push origin HEAD:main
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore(readme): update last updated timestamp"
+            git push origin HEAD:main
+          fi
