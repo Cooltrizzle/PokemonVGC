@@ -20,7 +20,7 @@
 
     <div class="brand">
       <h1 class="site-title">Pokemon VGC Dashboard</h1>
-      <p class="tagline">A Collection of useful resources and links to help with the Pokemon VGC Circuit</p>
+      <p class="tagline">A Collection of useful resources to help with the Pokemon VGC Circuit</p>
     </div>
       
     <div class="logo logo--right" aria-hidden="false">
@@ -39,50 +39,34 @@
     <!--<section id="about" class="card">-->
 
     <section id="PokemonShowdown" class="card">
-      <h2>Pokemon Showdown</h2>
-      <p>For all your battle simulating needs!</p>
+      <h2>Showdown</h2>
+      <p>The number one place for online Pokemon battles</p>
       <p><a class="btn" href="https://play.pokemonshowdown.com" target="_blank" rel="noopener">Pokemon Showdown</a></p>
     </section>
     
-    <section id="links" class="card">
-      <h2>Team Building Links</h2>
-      <p>Useful sites for discovering new pokemon or spreads for your team</p>
+    <section id="TeamBuilding" class="card">
+      <h2>Team Building</h2>
+      <p>Useful for discovering new pokemon or spreads for your next team</p>
       <p><a class="btn" href="https://nerd-of-now.github.io/NCP-VGC-Damage-Calculator/" target="_blank" rel="noopener">VGC Damage Calculator</a></p>
       <p><a class="btn" href="https://labmaus.net/tournaments" target="_blank" rel="noopener">LabMaus</a></p>
       <p><a class="btn" href="https://Munchstats.com" target="_blank" rel="noopener">Munchstats</a></p>
     </section>
 
-    <section id="Season Links" class="card">
-      <h2>Season Links</h2>
-      <p>Other sites good for checking tournament related content</p>
+    <section id="Other" class="card">
+      <h2>Other Sites</h2>
+      <p>Other sites good for checking pokemon or tournament related content</p>
+      <p><a class="btn" href="https://Serebii.Net" target="_blank" rel="noopener">Serebii</a></p>
+      <p><a class="btn" href="https://bulbapedia.bulbagarden.net/wiki/Main_Page" target="_blank" rel="noopener">Serebii</a></p>
     </section>
+    
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <small>© <span id="year"></span> Your Name — <a href="https://github.com/your-username/your-repo">Repository</a></small>
+      <!--<small>© <span id="year"></span> Your Name — <a href="https://github.com/your-username/your-repo">Repository</a></small>-->
+      <p>Last Edited: 11.11.2025</p>
     </div>
   </footer>
-
-  <script>
-    // small runtime nicety: show current year
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-
-<small>Last commit: <span id="last-commit">loading…</span></small>
-
-<script>
-fetch('last-commit.txt')
-  .then(r => r.text())
-  .then(t => {
-    if (!t) throw new Error('empty');
-    const d = new Date(t.trim());
-    document.getElementById('last-commit').textContent = d.toLocaleString();
-  })
-  .catch(() => { document.getElementById('last-commit').textContent = 'unknown'; });
-</script>
-
-
 
   
 </body>
