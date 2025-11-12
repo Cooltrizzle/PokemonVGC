@@ -3,7 +3,6 @@
 /* variables for easy tuning */
 :root {
   --content-max-width: 920px; /* match your .container max-width */
-  --container-padding: 36px;  /* increased padding for breathing room */
   --gutter-dark: rgba(0,0,0,0.45);
   --page-bg: #CFEEDC; /* existing page background */
 }
@@ -29,7 +28,7 @@ body {
 }
 
 /* your existing rules follow */
-.container { max-width: 920px; margin: 0 auto; padding: 28px; }
+.container { max-width: 920px; margin: 0 auto; padding: 36px; }
 
 /* header row — horizontal flex layout */
 .header-row {
