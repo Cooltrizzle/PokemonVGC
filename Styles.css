@@ -48,6 +48,9 @@ body {
   padding: 0.5rem 1rem;
   flex-wrap: nowrap;
   margin: 0 auto;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
 }
 
 .brand {
